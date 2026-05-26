@@ -1,0 +1,14 @@
+# Runtime state, not part of the skill source
+active-session.json
+abandoned/
+
+# Editor / OS noise
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.idea/
+.vscode/
+
+# Rendered timer output (per-session, lives in $TMPDIR)
+study-with-me-timer.html

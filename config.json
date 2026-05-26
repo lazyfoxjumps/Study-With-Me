@@ -1,0 +1,24 @@
+{
+  "focus_playlist": "",
+  "always_close": ["Slack", "Messages", "Discord", "Mail"],
+  "work_modes": {
+    "writing": ["Obsidian", "Safari"],
+    "code": ["Visual Studio Code", "Terminal"],
+    "study": ["Preview", "Notes"]
+  },
+  "log_dir": "~/Documents/study-log",
+  "reminders": {
+    "water": true,
+    "eyes": true,
+    "stand": true
+  },
+  "timer_ui": {
+    "enabled": true,
+    "accent_color": "#a78bfa",
+    "font": "system-ui",
+    "open_in_window": true,
+    "notify_halfway": true,
+    "notify_last_minute": true,
+    "notify_complete": true
+  }
+}

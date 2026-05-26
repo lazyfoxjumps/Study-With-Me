@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>__LABEL__</title>
+<style>
+  :root {
+    --bg: #0f172a;
+    --fg: #e2e8f0;
+    --muted: #94a3b8;
+    --accent: __ACCENT__;
+    --warn: #f59e0b;
+    --done: #22c55e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: __FONT__, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    transition: background 600ms ease;
+  }
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 2rem;
+    text-align: center;
+    user-select: none;
+  }
+  .goal {
+    font-size: clamp(0.9rem, 1.6vw, 1.2rem);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    max-width: 80vw;
+    word-break: break-word;
+  }
+  .time {
+    font-size: clamp(5rem, 18vw, 14rem);
+    font-weight: 200;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    color: var(--accent);
+    transition: color 600ms ease;
+  }
+  .bar-wrap {
+    width: min(70vw, 720px);
+    height: 10px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .bar {
+    height: 100%;
+    width: 0%;
+    background: var(--accent);
+    border-radius: 999px;
+    transition: width 1s linear, background 600ms ease;
+  }
+  .meta {
+    display: flex;
+    gap: 1.5rem;
+    color: var(--muted);
+    font-size: clamp(0.85rem, 1.4vw, 1.05rem);
+  }
+  .meta span strong { color: var(--fg); font-weight: 500; }
+  body.warn { background: #2a1f0a; }
+  body.warn .time { color: var(--warn); }
+  body.warn .bar { background: var(--warn); }
+  body.break { background: #0e2218; }
+  body.break .time { color: var(--done); }
+  body.break .bar { background: var(--done); }
+  body.done { background: #0a0a0a; }
+  body.done .time { font-size: clamp(2rem, 5vw, 4rem); color: var(--done); }
+  body.done .bar-wrap { display: none; }
+  .pulse {
+    animation: pulse 4s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.85; }
+  }
+</style>
+</head>
+<body class="pulse">
+  <div class="goal" id="goal">__GOAL__</div>
+  <div class="time" id="time">--:--</div>
+  <div class="bar-wrap"><div class="bar" id="bar"></div></div>
+  <div class="meta">
+    <span><strong id="label">__LABEL__</strong></span>
+    <span>Started <strong id="start">__START_HHMM__</strong></span>
+  </div>
+
+<script>
+  const END_TS = __END_TS__;
+  const START_TS = __START_TS__;
+  const MODE = "__MODE__";
+  const LABEL = "__LABEL__";
+
+  const timeEl = document.getElementById("time");
+  const barEl = document.getElementById("bar");
+  const body = document.body;
+
+  if (MODE === "break") body.classList.add("break");
+
+  function pad(n) { return n < 10 ? "0" + n : "" + n; }
+
+  function render() {
+    const now = Date.now();
+    const total = END_TS - START_TS;
+    const remaining = Math.max(0, END_TS - now);
+    const elapsed = total - remaining;
+    const pct = Math.min(100, (elapsed / total) * 100);
+
+    const mins = Math.floor(remaining / 60000);
+    const secs = Math.floor((remaining % 60000) / 1000);
+    const display = pad(mins) + ":" + pad(secs);
+
+    timeEl.textContent = display;
+    barEl.style.width = pct + "%";
+    document.title = display + " • " + LABEL;
+
+    if (MODE === "focus" && remaining <= 60000 && remaining > 0) {
+      body.classList.add("warn");
+    }
+
+    if (remaining <= 0) {
+      body.className = "done";
+      timeEl.textContent = MODE === "focus" ? "Block complete." : "Break complete.";
+      document.title = "Done • " + LABEL;
+      clearInterval(tick);
+    }
+  }
+
+  render();
+  const tick = setInterval(render, 1000);
+
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) render();
+  });
+</script>
+</body>
+</html>
