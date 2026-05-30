@@ -5,6 +5,13 @@ All notable changes to this skill are documented here.
 The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this skill follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.1] - 2026-05-30
+
+### Changed
+
+- Restored standard sentence capitalization across every reworded prompt from v1.4.0. The voice stays warm and casual ("Hey, what's the update, buddy?"), it just isn't lowercase anymore.
+- Voice rules updated: "warm and casual, with standard sentence capitalization. The warmth comes from word choice, not from dropping caps."
+
 ## [1.4.0] - 2026-05-30
 
 the skill talks like a person now, not a productivity app.
