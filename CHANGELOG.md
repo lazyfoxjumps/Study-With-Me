@@ -5,6 +5,19 @@ All notable changes to this skill are documented here.
 The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this skill follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.1] - 2026-05-25
+
+a tiny "X" so you can close the theme panel without hunting for the gear.
+
+### Added
+
+- Close button (✕) in the top-right corner of the theme settings panel. Click to dismiss the panel and go back to just the timer.
+- Press `Esc` while the panel is open to close it (keyboard shortcut, doesn't conflict with the existing Space / ← / → controls).
+
+### Changed
+
+- The gear icon (top-right of the timer page) still toggles the panel open and shut, same as before. The new X is just a clearer dismissal for users who don't realize the gear doubles as a close button.
+
 ## [1.3.0] - 2026-05-25
 
 "save as default" is now truly silent. no pickers, no prompts, every time.

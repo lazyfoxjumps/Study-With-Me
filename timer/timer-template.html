@@ -137,6 +137,26 @@
     box-shadow: -10px 0 30px rgba(0, 0, 0, 0.18);
   }
   .panel.open { transform: translateX(0); }
+  .panel-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 2rem;
+    height: 2rem;
+    background: var(--surface-bg);
+    border: 1px solid var(--surface-border);
+    border-radius: 50%;
+    color: var(--fg);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
+    line-height: 1;
+    transition: background 200ms ease, transform 150ms ease, color 400ms ease, border-color 400ms ease;
+  }
+  .panel-close:hover { background: var(--surface-border); transform: scale(1.05); }
+  .panel-close:active { transform: scale(0.95); }
   .panel h2 {
     font-size: 1rem;
     font-weight: 500;
@@ -322,6 +342,7 @@
   </div>
 
   <aside class="panel" id="panel">
+    <button class="panel-close" id="panelClose" title="Close (Esc)" aria-label="Close theme settings">✕</button>
     <h2>Theme</h2>
     <p class="lede">Pick a vibe, or tweak your own. "Save as default" writes it back to your config.</p>
 
@@ -533,6 +554,14 @@
   skipBtn.addEventListener("click", skip);
 
   document.addEventListener("keydown", (e) => {
+    if (e.code === "Escape") {
+      const panel = document.getElementById("panel");
+      if (panel && panel.classList.contains("open")) {
+        panel.classList.remove("open");
+        e.preventDefault();
+        return;
+      }
+    }
     if (e.target.tagName === "INPUT") return;
     if (e.code === "Space") { e.preventDefault(); togglePause(); }
     else if (e.code === "ArrowLeft") { rewind(); }
@@ -793,9 +822,13 @@
   saveBtn.addEventListener("click", saveToConfig);
   resetBtn.addEventListener("click", resetTheme);
 
-  // gear toggle
+  // gear / close toggle
+  const panelEl = document.getElementById("panel");
   document.getElementById("gear").addEventListener("click", () => {
-    document.getElementById("panel").classList.toggle("open");
+    panelEl.classList.toggle("open");
+  });
+  document.getElementById("panelClose").addEventListener("click", () => {
+    panelEl.classList.remove("open");
   });
 
   // ---- boot ----
