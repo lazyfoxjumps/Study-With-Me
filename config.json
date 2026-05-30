@@ -14,11 +14,19 @@
   },
   "timer_ui": {
     "enabled": true,
-    "accent_color": "#a78bfa",
     "font": "system-ui",
     "open_in_window": true,
     "notify_halfway": true,
     "notify_last_minute": true,
-    "notify_complete": true
+    "notify_complete": true,
+    "native_bells": true,
+    "rewind_seconds": 60,
+    "theme": {
+      "accent":     "#a78bfa",
+      "background": "#0f172a",
+      "warn":       "#f59e0b",
+      "break":      "#22c55e",
+      "done":       "#22c55e"
+    }
   }
 }

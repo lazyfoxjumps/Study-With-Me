@@ -44,7 +44,7 @@ Default ritual sequence:
 Open the HTML timer in a popup window, then run a background bell timer for notifications. **Stay silent for the entire block.**
 
 **Step 3a: Open the visual timer.**
-Call `timer/render-timer.sh` with the session data. It substitutes values into the template, writes to `$TMPDIR/study-with-me-timer.html`, and opens it as a Chromium `--app=` window (no browser chrome, popup style). Falls back to a regular browser tab if no Chromium-family browser is installed.
+Call `timer/render-timer.sh` with the session data. The script reads color theme and rewind-seconds from `config.json` (timer_ui.theme, timer_ui.rewind_seconds) so you don't need to pass them. It substitutes values into the template, writes to `$TMPDIR/study-with-me-timer.html`, and opens it as a Chromium `--app=` window (no browser chrome, popup style). Falls back to a regular browser tab if no Chromium-family browser is installed.
 
 ```bash
 ~/.claude/skills/study-with-me/timer/render-timer.sh \
@@ -52,15 +52,18 @@ Call `timer/render-timer.sh` with the session data. It substitutes values into t
   --label "Block <n> of <total> - Focus" \
   --duration-min <N> \
   --mode focus \
-  --accent "<config.timer_ui.accent_color>" \
-  --font "<config.timer_ui.font>" \
   --open-in-window <config.timer_ui.open_in_window>
 ```
 
-The HTML self-updates via JavaScript using a target end-timestamp, so background-tab throttling doesn't affect accuracy.
+Optional overrides (only pass if you want to override config for this session):
+`--accent`, `--bg`, `--warn`, `--break-color`, `--done-color`, `--font`, `--rewind-seconds`.
 
-**Step 3b: Schedule bell notifications.**
-Use `Bash` with `run_in_background: true` to fire macOS notifications (via the adapter's `notify` verb) at:
+The HTML self-updates via JavaScript using a target end-timestamp, so background-tab throttling doesn't affect accuracy. It also exposes three live controls (rewind, pause/play, skip) and a theme picker via a gear icon (top right). The page plays a soft in-browser chime at halfway, last minute, and complete, synced to the visual timer (so it stays correct even after pause/rewind/skip).
+
+**Step 3b: Schedule native bell notifications (only if `config.timer_ui.native_bells` is true).**
+If `config.timer_ui.native_bells` is `false`, SKIP this step entirely. The in-browser chime handles all audio cues and always stays in sync with the visual timer.
+
+If `native_bells` is `true` (default), use `Bash` with `run_in_background: true` to fire native OS notifications via the adapter's `notify` verb at:
 - Halfway point (if `config.timer_ui.notify_halfway`)
 - Last 60 seconds (if `config.timer_ui.notify_last_minute`)
 - Block complete (always, if `config.timer_ui.notify_complete`)
@@ -72,11 +75,20 @@ Example background scheduler (50 min block):
   sleep 60   && ~/.claude/skills/study-with-me/adapters/macos.sh notify "Study With Me" "Block complete" ) &
 ```
 
+Caveat: native bells are scheduled by wall-clock from block start. If the user pauses, rewinds, or skips via the timer controls, native bells will still fire at the original times and may drift from the visual timer. If the user wants tight sync, they can set `native_bells: false` and rely on the in-browser chime.
+
 **Step 3c: Hold silence.**
 You do not message the user during the block. The HTML window + adapter notifications carry all signal. If the user messages you during the block:
 - Answer in one or two sentences, max.
 - No em-dashes or en-dashes anywhere.
 - End by pushing them back to the goal. Example: "Quick answer, use `useMemo` here. Back to the intro section."
+
+**Mid-session controls (user-facing reference).**
+- ⏮ Rewind: adds `config.timer_ui.rewind_seconds` (default 60) back onto the clock.
+- ⏸ / ▶ Pause/Play: freezes / resumes the countdown.
+- ⏭ Skip: ends the current block immediately.
+- ⚙ Gear: opens the theme picker (5 colors, hex + native picker, "Save as default" writes back to config.json via the File System Access API).
+- Keyboard: Space toggles pause, ← rewinds, → skips.
 
 ### 4. Break check-in (when the timer fires)
 
