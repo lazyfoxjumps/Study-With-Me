@@ -1,6 +1,8 @@
 # Study With Me
 
-> **new in v1.1**, the timer popup now has live controls (rewind, pause/play, skip) and a 5-color theme picker that saves back to your config. tap the gear icon to vibe-match the timer to your mood. see [CHANGELOG.md](CHANGELOG.md) for details.
+> **new in v1.2**, five academia-flavored color presets (Dark Academia, Light Academia, Forest Cottagecore, Candlelit Nocturne, Linen & Latte) sit at the top of the theme panel. one click and the whole timer transforms. light backgrounds work properly now too. see [CHANGELOG.md](CHANGELOG.md) for details.
+>
+> **v1.1**, the timer popup added live controls (rewind, pause/play, skip) and a 5-color theme picker.
 
 hey, glad you're here.
 
@@ -101,9 +103,21 @@ three buttons sit just below the progress bar:
 
 keyboard shortcuts work too: space pauses, ← rewinds, → skips.
 
-### theme picker (new in v1.1)
+### theme picker (presets in v1.2, custom slots in v1.1)
 
-click the gear icon (top right) to open a settings panel with five color rows:
+click the gear icon (top right) to open the settings panel.
+
+at the top, five **presets** for the people who don't want to think about hex codes:
+
+- **Dark Academia**, oxblood + aged oak, Donna Tartt energy
+- **Light Academia**, sepia ink on parchment cream, sunlit study room
+- **Forest Cottagecore**, moss + bark, herb garden at dusk
+- **Candlelit Nocturne**, warm gold on midnight, single candle on the desk
+- **Linen & Latte**, espresso + warm cream, cozy cafe corner
+
+each preset is a pill with the name and a 5-swatch preview. tap to apply instantly. light backgrounds work just as well as dark ones now, the foreground and overlay colors auto-adjust.
+
+below the presets, five color slots for full custom tweaking:
 
 - **accent**, the time text and progress bar
 - **background**, the whole page

@@ -13,6 +13,9 @@
     --warn: __WARN__;
     --break: __BREAK__;
     --done: __DONE__;
+    --surface-bg: rgba(255, 255, 255, 0.06);
+    --surface-border: rgba(255, 255, 255, 0.12);
+    --done-bg: #0a0a0a;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body {
@@ -20,7 +23,7 @@
     background: var(--bg);
     color: var(--fg);
     font-family: __FONT__, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    transition: background 600ms ease;
+    transition: background 600ms ease, color 600ms ease;
   }
   body {
     display: flex;
@@ -51,7 +54,7 @@
   .bar-wrap {
     width: min(70vw, 720px);
     height: 10px;
-    background: rgba(255, 255, 255, 0.08);
+    background: var(--surface-bg);
     border-radius: 999px;
     overflow: hidden;
   }
@@ -68,9 +71,9 @@
     align-items: center;
   }
   .ctrl {
-    background: rgba(255, 255, 255, 0.06);
+    background: var(--surface-bg);
     color: var(--fg);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    border: 1px solid var(--surface-border);
     border-radius: 999px;
     width: 3rem;
     height: 3rem;
@@ -79,9 +82,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background 200ms ease, transform 100ms ease;
+    transition: background 200ms ease, transform 100ms ease, color 400ms ease, border-color 400ms ease;
   }
-  .ctrl:hover { background: rgba(255, 255, 255, 0.12); }
+  .ctrl:hover { background: var(--surface-border); }
   .ctrl:active { transform: scale(0.95); }
   .ctrl.primary {
     width: 3.5rem;
@@ -105,8 +108,8 @@
     right: 1rem;
     width: 2.25rem;
     height: 2.25rem;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: var(--surface-bg);
+    border: 1px solid var(--surface-border);
     border-radius: 50%;
     color: var(--fg);
     cursor: pointer;
@@ -114,38 +117,77 @@
     align-items: center;
     justify-content: center;
     font-size: 1rem;
-    transition: background 200ms ease, transform 400ms ease;
+    transition: background 200ms ease, transform 400ms ease, color 400ms ease, border-color 400ms ease;
   }
-  .gear:hover { background: rgba(255, 255, 255, 0.12); transform: rotate(60deg); }
+  .gear:hover { background: var(--surface-border); transform: rotate(60deg); }
   .panel {
     position: fixed;
     top: 0;
     right: 0;
     height: 100%;
     width: min(360px, 90vw);
-    background: rgba(15, 23, 42, 0.96);
-    border-left: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--bg);
+    border-left: 1px solid var(--surface-border);
     padding: 4rem 1.5rem 1.5rem;
     overflow-y: auto;
     transform: translateX(100%);
-    transition: transform 300ms ease;
+    transition: transform 300ms ease, background 600ms ease;
     z-index: 10;
     text-align: left;
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.18);
   }
   .panel.open { transform: translateX(0); }
   .panel h2 {
     font-size: 1rem;
     font-weight: 500;
-    margin-bottom: 1rem;
+    margin-bottom: 0.4rem;
     color: var(--fg);
   }
+  .panel p.lede {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
   .panel h3 {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     text-transform: uppercase;
-    letter-spacing: 0.15em;
+    letter-spacing: 0.16em;
     color: var(--muted);
     margin: 1.25rem 0 0.5rem;
     font-weight: 500;
+  }
+  .presets {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .preset {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.55rem 0.75rem;
+    background: var(--surface-bg);
+    border: 1px solid var(--surface-border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 200ms ease, transform 100ms ease, border-color 200ms ease;
+  }
+  .preset:hover { background: var(--surface-border); }
+  .preset:active { transform: scale(0.98); }
+  .preset-name {
+    font-size: 0.85rem;
+    color: var(--fg);
+  }
+  .preset-swatches {
+    display: flex;
+    gap: 4px;
+  }
+  .preset-swatches span {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1px solid var(--surface-border);
+    display: inline-block;
   }
   .color-row {
     display: flex;
@@ -162,7 +204,7 @@
   .color-row input[type="color"] {
     width: 2rem;
     height: 2rem;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid var(--surface-border);
     border-radius: 6px;
     background: transparent;
     cursor: pointer;
@@ -170,8 +212,8 @@
   }
   .color-row input[type="text"] {
     flex: 1;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--surface-bg);
+    border: 1px solid var(--surface-border);
     color: var(--fg);
     padding: 0.45rem 0.6rem;
     border-radius: 6px;
@@ -185,13 +227,14 @@
   }
   .panel-actions button {
     flex: 1;
-    background: rgba(255, 255, 255, 0.06);
+    background: var(--surface-bg);
     color: var(--fg);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    border: 1px solid var(--surface-border);
     padding: 0.6rem;
     border-radius: 8px;
     font-size: 0.85rem;
     cursor: pointer;
+    transition: filter 150ms ease;
   }
   .panel-actions button.primary {
     background: var(--accent);
@@ -214,7 +257,7 @@
   body.break .time { color: var(--break); }
   body.break .bar { background: var(--break); }
   body.break .ctrl.primary { background: var(--break); }
-  body.done { background: #0a0a0a; }
+  body.done { background: var(--done-bg); }
   body.done .time { font-size: clamp(2rem, 5vw, 4rem); color: var(--done); }
   body.done .bar-wrap, body.done .controls { display: none; }
   .pulse { animation: pulse 4s ease-in-out infinite; }
@@ -223,6 +266,42 @@
     50% { opacity: 0.88; }
   }
 </style>
+<script>
+  // Pre-paint luminance derivation: keeps light themes from flashing dark.
+  (function() {
+    var bg = "__BG__";
+    function hexToRgb(h) {
+      h = h.replace("#", "");
+      if (h.length === 3) h = h.split("").map(c => c + c).join("");
+      var n = parseInt(h, 16);
+      return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+    }
+    function luminance(hex) {
+      try {
+        var rgb = hexToRgb(hex).map(function(v) {
+          v = v / 255;
+          return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+        });
+        return 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2];
+      } catch (e) { return 0; }
+    }
+    var isLight = luminance(bg) > 0.55;
+    var r = document.documentElement;
+    if (isLight) {
+      r.style.setProperty("--fg", "#2a1f15");
+      r.style.setProperty("--muted", "rgba(40, 30, 20, 0.55)");
+      r.style.setProperty("--surface-bg", "rgba(40, 30, 20, 0.06)");
+      r.style.setProperty("--surface-border", "rgba(40, 30, 20, 0.14)");
+      r.style.setProperty("--done-bg", "#231a14");
+    } else {
+      r.style.setProperty("--fg", "#e2e8f0");
+      r.style.setProperty("--muted", "#94a3b8");
+      r.style.setProperty("--surface-bg", "rgba(255, 255, 255, 0.06)");
+      r.style.setProperty("--surface-border", "rgba(255, 255, 255, 0.12)");
+      r.style.setProperty("--done-bg", "#0a0a0a");
+    }
+  })();
+</script>
 </head>
 <body class="pulse">
   <button class="gear" id="gear" title="Theme settings">⚙</button>
@@ -244,9 +323,10 @@
 
   <aside class="panel" id="panel">
     <h2>Theme</h2>
-    <p style="font-size:0.8rem;color:var(--muted);margin-bottom:1rem;">
-      Tweak the colors live. "Save as default" writes them back to your config.
-    </p>
+    <p class="lede">Pick a vibe, or tweak your own. "Save as default" writes it back to your config.</p>
+
+    <h3>Presets</h3>
+    <div class="presets" id="presets"></div>
 
     <h3>Colors</h3>
     <div id="colorRows"></div>
@@ -271,6 +351,29 @@
     break:      "__BREAK__",
     done:       "__DONE__"
   };
+
+  const PRESETS = [
+    {
+      name: "Dark Academia",
+      theme: { accent: "#8b2e3b", background: "#1c1410", warn: "#c9933b", break: "#6b7e5c", done: "#a8895d" }
+    },
+    {
+      name: "Light Academia",
+      theme: { accent: "#5c3a1e", background: "#efe4ce", warn: "#b07d2f", break: "#8e9b81", done: "#a47358" }
+    },
+    {
+      name: "Forest Cottagecore",
+      theme: { accent: "#6b8e5a", background: "#1a201a", warn: "#c98a3f", break: "#a8b89f", done: "#a86b4f" }
+    },
+    {
+      name: "Candlelit Nocturne",
+      theme: { accent: "#d4a755", background: "#0c1424", warn: "#cc6633", break: "#6a89a8", done: "#b8a888" }
+    },
+    {
+      name: "Linen & Latte",
+      theme: { accent: "#4a2e1f", background: "#ede2cf", warn: "#c47b3d", break: "#9aa490", done: "#b08374" }
+    }
+  ];
 
   // ---- state machine ----
   const state = {
@@ -313,12 +416,10 @@
     barEl.style.width = pct + "%";
     document.title = (state.isPaused ? "(paused) " : "") + display + " • " + LABEL;
 
-    // halfway chime
     if (state.mode === "focus" && !state.chimeFired.halfway && elapsed >= tot / 2 && rem > 0) {
       state.chimeFired.halfway = true;
       playChime("halfway");
     }
-    // last-minute warn
     if (state.mode === "focus" && rem <= 60000 && rem > 0) {
       body.classList.add("warn");
       if (!state.chimeFired.lastminute) {
@@ -347,7 +448,7 @@
     }
   }
 
-  // ---- chime (Web Audio, no audio file) ----
+  // ---- chime ----
   let audioCtx = null;
   function playChime(kind) {
     try {
@@ -376,7 +477,7 @@
         osc.start(start);
         osc.stop(start + dur);
       });
-    } catch (e) { /* silently swallow audio errors */ }
+    } catch (e) {}
   }
 
   // ---- ticking ----
@@ -436,10 +537,43 @@
     else if (e.code === "ArrowRight") { skip(); }
   });
 
-  // ---- theme picker ----
+  // ---- theme ----
   const COLOR_KEYS = ["accent", "background", "warn", "break", "done"];
   const VAR_MAP = { accent: "--accent", background: "--bg", warn: "--warn", break: "--break", done: "--done" };
   const LS_KEY = "study-with-me-theme";
+
+  function hexToRgb(h) {
+    h = h.replace("#", "");
+    if (h.length === 3) h = h.split("").map(c => c + c).join("");
+    const n = parseInt(h, 16);
+    return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+  }
+  function relativeLuminance(hex) {
+    try {
+      const rgb = hexToRgb(hex).map(v => {
+        v = v / 255;
+        return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+      });
+      return 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2];
+    } catch (e) { return 0; }
+  }
+  function setLuminanceVars(bgHex) {
+    const r = document.documentElement;
+    const isLight = relativeLuminance(bgHex) > 0.55;
+    if (isLight) {
+      r.style.setProperty("--fg", "#2a1f15");
+      r.style.setProperty("--muted", "rgba(40, 30, 20, 0.55)");
+      r.style.setProperty("--surface-bg", "rgba(40, 30, 20, 0.06)");
+      r.style.setProperty("--surface-border", "rgba(40, 30, 20, 0.14)");
+      r.style.setProperty("--done-bg", "#231a14");
+    } else {
+      r.style.setProperty("--fg", "#e2e8f0");
+      r.style.setProperty("--muted", "#94a3b8");
+      r.style.setProperty("--surface-bg", "rgba(255, 255, 255, 0.06)");
+      r.style.setProperty("--surface-border", "rgba(255, 255, 255, 0.12)");
+      r.style.setProperty("--done-bg", "#0a0a0a");
+    }
+  }
 
   function loadTheme() {
     try {
@@ -452,15 +586,43 @@
     COLOR_KEYS.forEach(k => {
       document.documentElement.style.setProperty(VAR_MAP[k], theme[k]);
     });
+    setLuminanceVars(theme.background);
   }
   function persistTheme(theme) {
     try { localStorage.setItem(LS_KEY, JSON.stringify(theme)); } catch (e) {}
+  }
+  function refreshPickerInputs() {
+    document.querySelectorAll("#colorRows input").forEach(inp => {
+      inp.value = currentTheme[inp.dataset.key];
+    });
+  }
+  function applyPreset(theme) {
+    COLOR_KEYS.forEach(k => { currentTheme[k] = theme[k]; });
+    applyTheme(currentTheme);
+    persistTheme(currentTheme);
+    refreshPickerInputs();
   }
 
   const currentTheme = loadTheme();
   applyTheme(currentTheme);
 
-  // build picker rows
+  // ---- preset pills ----
+  const presetsEl = document.getElementById("presets");
+  PRESETS.forEach((p, idx) => {
+    const pill = document.createElement("div");
+    pill.className = "preset";
+    pill.dataset.idx = idx;
+    const swatches = COLOR_KEYS.map(k =>
+      `<span style="background:${p.theme[k]}"></span>`
+    ).join("");
+    pill.innerHTML =
+      `<span class="preset-name">${p.name}</span>` +
+      `<div class="preset-swatches">${swatches}</div>`;
+    pill.addEventListener("click", () => applyPreset(p.theme));
+    presetsEl.appendChild(pill);
+  });
+
+  // ---- color picker rows ----
   const colorRowsEl = document.getElementById("colorRows");
   COLOR_KEYS.forEach(k => {
     const row = document.createElement("div");
@@ -480,7 +642,6 @@
     let val = e.target.value;
     if (e.target.type === "text" && !isValidHex(val)) return;
     currentTheme[key] = val;
-    // sync sibling input
     const siblings = colorRowsEl.querySelectorAll(`[data-key="${key}"]`);
     siblings.forEach(s => { if (s !== e.target) s.value = val; });
     applyTheme(currentTheme);
@@ -494,7 +655,6 @@
 
   async function saveToConfig() {
     panelMsg.textContent = "";
-    // try File System Access API
     if (window.showOpenFilePicker) {
       try {
         const [handle] = await window.showOpenFilePicker({
@@ -515,7 +675,6 @@
         panelMsg.textContent = "FS access failed, downloading theme.json instead.";
       }
     }
-    // fallback: download
     const blob = new Blob([JSON.stringify({ timer_ui: { theme: currentTheme } }, null, 2)],
                          { type: "application/json" });
     const url = URL.createObjectURL(blob);
@@ -529,10 +688,7 @@
     Object.assign(currentTheme, TEMPLATE_THEME);
     applyTheme(currentTheme);
     persistTheme(currentTheme);
-    // refresh input values
-    colorRowsEl.querySelectorAll("input").forEach(inp => {
-      inp.value = currentTheme[inp.dataset.key];
-    });
+    refreshPickerInputs();
     panelMsg.textContent = "Reset to current defaults.";
   }
 

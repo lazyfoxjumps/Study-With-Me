@@ -5,6 +5,32 @@ All notable changes to this skill are documented here.
 The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this skill follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-05-25
+
+five academia-flavored color presets, plus proper light-theme support so the timer doesn't break when the background goes cream.
+
+### Added
+
+- **Five color presets** at the top of the theme panel:
+  - **Dark Academia**, oxblood + aged oak, Oxford library energy
+  - **Light Academia**, sepia ink + parchment cream, sunlit study room
+  - **Forest Cottagecore**, moss + bark, herb garden at dusk
+  - **Candlelit Nocturne**, warm gold + midnight navy, single candle on dark wood
+  - **Linen & Latte**, espresso + warm cream, cozy cafe corner
+- Each preset shows as a horizontal pill with name and 5-swatch preview. Click to apply instantly. Tweak individual slots afterward, then "Save as default" if you want to keep it.
+- **Light-theme support.** Foreground text, muted text, surface overlays (control buttons, gear, panel inputs), and the "block complete" backdrop are now auto-derived from background luminance using the W3C relative-luminance formula. Light themes render with dark text on warm overlays; dark themes keep the original look.
+- A tiny pre-paint script in `<head>` sets the luminance-derived variables before the first paint, so light themes never flash dark on load.
+
+### Changed
+
+- `timer/timer-template.html`: hardcoded `rgba(255, 255, 255, ...)` and `rgba(15, 23, 42, ...)` values across `.bar-wrap`, `.ctrl`, `.gear`, `.panel`, `.color-row` inputs, and `.panel-actions button` are now driven by theme-aware CSS variables (`--surface-bg`, `--surface-border`).
+- `body.done` background switched from hardcoded `#0a0a0a` to a theme-derived `--done-bg` so light themes get a warm dim instead of a stark black.
+- Panel background switched from hardcoded dark navy to `var(--bg)` plus a soft drop shadow, so the panel always matches the active theme.
+
+### Known limitations
+
+- The five presets are baked into the template, not user-editable as a list. Build your own by applying a preset, tweaking, and hitting "Save as default."
+
 ## [1.1.0] - 2026-05-25
 
 mid-session controls and theme picker. the timer is now yours to tweak, live.
