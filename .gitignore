@@ -11,4 +11,5 @@ Thumbs.db
 .vscode/
 
 # Rendered timer output (per-session, lives in $TMPDIR)
+loft-hours-timer.html
 study-with-me-timer.html

@@ -13,14 +13,14 @@
 # Cross-platform: macOS, Windows (Git Bash / WSL), Linux
 #
 # If color args are omitted, defaults are pulled from
-# ~/.claude/skills/study-with-me/config.json (timer_ui.theme).
+# ~/.claude/skills/loft-hours/config.json (timer_ui.theme).
 
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TEMPLATE="$SCRIPT_DIR/timer-template.html"
-OUT="${TMPDIR:-/tmp}/study-with-me-timer.html"
-CONFIG_FILE="${HOME}/.claude/skills/study-with-me/config.json"
+OUT="${TMPDIR:-/tmp}/loft-hours-timer.html"
+CONFIG_FILE="${HOME}/.claude/skills/loft-hours/config.json"
 
 GOAL=""
 LABEL=""

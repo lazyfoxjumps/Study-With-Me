@@ -1,4 +1,6 @@
-# Study With Me
+# Loft Hours
+
+> formerly **Study With Me**. the skill, the workflow, and the voice are unchanged. only the name moved upstairs.
 
 > **new in v1.3**, "save as default" is now fully silent. no file picker, no permission prompts. ever. a tiny local-only HTTP server (127.0.0.1, per-session token) writes your theme straight to `config.json`. see [CHANGELOG.md](CHANGELOG.md) for details.
 >
@@ -14,7 +16,7 @@ think of it less like a productivity app and more like a quiet study buddy who s
 
 ## what it actually does
 
-you type `/study-with-me` and it walks you through a full focus session:
+you type `/loft-hours` and it walks you through a full focus session:
 
 1. asks you four short questions (what, how long, what does done look like, how are you feeling)
 2. (optionally) sets the room: turns on Do Not Disturb, closes the distracting apps, opens the ones you need, starts your focus playlist
@@ -40,7 +42,7 @@ the skill never interrupts you during a focus block. ever. the only signals are 
 
 if you're reading this, the skill is probably already installed. type any of these into Claude and you're off:
 
-- `/study-with-me`
+- `/loft-hours`
 - "let's do a focus session"
 - "I need to focus for 50 minutes"
 - "body double me"
@@ -72,7 +74,7 @@ before the timer starts, the skill offers to set up your space:
 
 three flavors: **full ritual** (everything), **quick ritual** (just DnD and music), or **skip** if you're already locked in.
 
-if you ever want to skip it entirely, run `/study-with-me --quick` and go straight to the timer.
+if you ever want to skip it entirely, run `/loft-hours --quick` and go straight to the timer.
 
 ## the timer
 
@@ -184,8 +186,8 @@ these are just markdown. you can open them in Obsidian, grep them, feed them to 
 
 once you've done a few sessions, ask for a review:
 
-- `/study-with-me review week`
-- `/study-with-me review month`
+- `/loft-hours review week`
+- `/loft-hours review month`
 
 the skill reads your log folder and writes you a report:
 
@@ -202,12 +204,12 @@ this is the part that turns the skill from "fancy timer" into "personal operatin
 ## flags
 
 - `--quick`, skip the environment setup, straight to the timer
-- `--with <skill-name>`, pre-load another skill so you can invoke it mid-session. example: `/study-with-me --with natal-chart-reader`. just announces, doesn't auto-fire
+- `--with <skill-name>`, pre-load another skill so you can invoke it mid-session. example: `/loft-hours --with natal-chart-reader`. just announces, doesn't auto-fire
 - `--resume`, use yesterday's "next step" as today's goal. perfect for "what was I working on?" mornings
 
 ## composability
 
-the skill plays well with others. you can invoke any other skill inside a session and the log captures that you did. studying for a test? run `/study-with-me`, then mid-session ask Claude for a quick natal chart, or have it review your code, or whatever. the timer keeps ticking. the session log notes what came up.
+the skill plays well with others. you can invoke any other skill inside a session and the log captures that you did. studying for a test? run `/loft-hours`, then mid-session ask Claude for a quick natal chart, or have it review your code, or whatever. the timer keeps ticking. the session log notes what came up.
 
 ## cross-platform
 
@@ -227,7 +229,7 @@ anything marked TODO falls back gracefully. the session never breaks because one
 ## file structure
 
 ```
-~/.claude/skills/study-with-me/
+~/.claude/skills/loft-hours/
 ├── SKILL.md              the brain
 ├── README.md             this file
 ├── config.json           your settings
@@ -244,7 +246,7 @@ session logs live separately at `~/Documents/study-log/` (configurable).
 
 ## config
 
-open `~/.claude/skills/study-with-me/config.json` and tune to taste:
+open `~/.claude/skills/loft-hours/config.json` and tune to taste:
 
 ```json
 {

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Study With Me — Linux adapter (stub)
+# Loft Hours — Linux adapter (stub)
 # Interface: dnd_on | dnd_off | close_apps <list> | open_apps <list> | play_focus_music <uri> | stop_focus_music | notify <title> <message>
 #
 # Status: STUB. Fill in for your specific desktop environment.
@@ -69,7 +69,7 @@ stop_focus_music() {
 }
 
 notify() {
-  title="${1:-Study With Me}"
+  title="${1:-Loft Hours}"
   message="${2:-}"
   if command -v notify-send >/dev/null 2>&1; then
     notify-send "$title" "$message" 2>/dev/null && echo "notify: ok" && return 0

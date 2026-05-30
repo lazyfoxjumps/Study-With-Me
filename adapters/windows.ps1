@@ -1,4 +1,4 @@
-# Study With Me — Windows adapter (stub)
+# Loft Hours — Windows adapter (stub)
 # Interface: dnd_on | dnd_off | close_apps <list> | open_apps <list> | play_focus_music <uri> | stop_focus_music | notify <title> <message>
 #
 # Status: STUB. Fill in implementations when you actually run this on Windows.

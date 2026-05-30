@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Study With Me — macOS adapter
+# Loft Hours — macOS adapter
 # Interface: dnd_on | dnd_off | close_apps <list> | open_apps <list> | play_focus_music <uri> | stop_focus_music | notify <title> <message>
 
 set -e
@@ -64,7 +64,7 @@ stop_focus_music() {
 }
 
 notify() {
-  title="${1:-Study With Me}"
+  title="${1:-Loft Hours}"
   message="${2:-}"
   osascript -e "display notification \"$message\" with title \"$title\" sound name \"Tink\"" 2>/dev/null \
     && echo "notify: ok" \
