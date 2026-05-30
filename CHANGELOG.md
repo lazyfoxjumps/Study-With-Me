@@ -5,6 +5,32 @@ All notable changes to this skill are documented here.
 The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this skill follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-05-25
+
+"save as default" is now truly silent. no pickers, no prompts, every time.
+
+### Added
+
+- New file `timer/save-server.py`: a tiny local-only HTTP server (Python 3 stdlib, no dependencies) that accepts theme-save POSTs and writes them straight to `config.json`.
+- `timer/render-timer.sh` now starts the save server in the background at session boot, picks a free TCP port, generates a per-session random token, and injects the resulting `http://127.0.0.1:<port>/save-theme/<token>` URL into the timer page.
+- The timer's **Save as default** button now POSTs the theme to that server. Server validates the token, validates the payload against a strict schema (5 known keys, hex strings only), and rewrites `config.json` atomically. Returns in milliseconds, no UI surface beyond a "Saved." confirmation.
+
+### Changed
+
+- The File System Access + IndexedDB picker flow from v1.2.1 is now a **fallback**, not the primary path. The picker only appears if Python 3 isn't installed, the server fails to bind, or the page can't reach the server. Otherwise users never see a picker again.
+
+### Security
+
+- The save server binds to `127.0.0.1` only and is never reachable from another host on the network.
+- Every request must include a per-session random token (`secrets.token_urlsafe(16)`, ~22 chars of entropy) in the URL path. Wrong token → 403.
+- Server enforces a strict payload schema. Unknown keys or non-hex values → 400.
+- Self-terminates after 4 hours idle or 8 hours hard timeout.
+
+### Known limitations
+
+- Requires Python 3 (already a soft dependency for `render-timer.sh` config reading; no new install needed on macOS, most Linux, or Windows with Python).
+- If Python 3 isn't found, the timer gracefully falls back to the v1.2.1 picker flow. Save still works, just with one prompt.
+
 ## [1.2.1] - 2026-05-25
 
 "save as default" stops asking you to pick a file location every single time.

@@ -1,8 +1,10 @@
 # Study With Me
 
-> **new in v1.2**, five academia-flavored color presets (Dark Academia, Light Academia, Forest Cottagecore, Candlelit Nocturne, Linen & Latte) sit at the top of the theme panel. one click and the whole timer transforms. light backgrounds work properly now too. see [CHANGELOG.md](CHANGELOG.md) for details.
+> **new in v1.3**, "save as default" is now fully silent. no file picker, no permission prompts. ever. a tiny local-only HTTP server (127.0.0.1, per-session token) writes your theme straight to `config.json`. see [CHANGELOG.md](CHANGELOG.md) for details.
 >
-> **v1.1**, the timer popup added live controls (rewind, pause/play, skip) and a 5-color theme picker.
+> **v1.2**, five academia-flavored color presets (Dark Academia, Light Academia, Forest Cottagecore, Candlelit Nocturne, Linen & Latte) sit at the top of the theme panel.
+>
+> **v1.1**, live controls (rewind, pause/play, skip) and a 5-color theme picker.
 
 hey, glad you're here.
 

@@ -92,6 +92,24 @@ START_TS=$(($(date +%s) * 1000))
 END_TS=$((START_TS + DURATION_MIN * 60 * 1000))
 START_HHMM=$(date +"%H:%M")
 
+# Spin up the local save server so the theme picker can write to config.json
+# silently (no file picker, no permission prompts). 127.0.0.1 only, per-session
+# random token. Self-terminates after idle. Falls back to FSAccess/download in
+# the browser if anything here goes wrong.
+SAVE_URL=""
+if command -v python3 >/dev/null 2>&1; then
+  SAVE_PORT=$(python3 -c "
+import socket
+s = socket.socket(); s.bind(('127.0.0.1', 0))
+print(s.getsockname()[1]); s.close()
+" 2>/dev/null || true)
+  SAVE_TOKEN=$(python3 -c "import secrets; print(secrets.token_urlsafe(16))" 2>/dev/null || true)
+  if [ -n "$SAVE_PORT" ] && [ -n "$SAVE_TOKEN" ] && [ -f "$SCRIPT_DIR/save-server.py" ] && [ -f "$CONFIG_FILE" ]; then
+    ( python3 "$SCRIPT_DIR/save-server.py" "$CONFIG_FILE" "$SAVE_TOKEN" "$SAVE_PORT" >/dev/null 2>&1 & ) </dev/null
+    SAVE_URL="http://127.0.0.1:$SAVE_PORT/save-theme/$SAVE_TOKEN"
+  fi
+fi
+
 # Escape forward-slashes and ampersands for sed safety
 esc() { printf '%s' "$1" | sed -e 's/[\/&]/\\&/g'; }
 
@@ -109,6 +127,7 @@ sed \
   -e "s/__END_TS__/$END_TS/g" \
   -e "s/__START_HHMM__/$(esc "$START_HHMM")/g" \
   -e "s/__REWIND_SECONDS__/$REWIND_SECONDS/g" \
+  -e "s|__SAVE_URL__|$(esc "$SAVE_URL")|g" \
   "$TEMPLATE" > "$OUT"
 
 # Detect platform

@@ -352,6 +352,8 @@
     done:       "__DONE__"
   };
 
+  const SAVE_URL = "__SAVE_URL__";
+
   const PRESETS = [
     {
       name: "Dark Academia",
@@ -711,9 +713,31 @@
   }
 
   async function saveToConfig() {
-    panelMsg.textContent = "";
+    panelMsg.textContent = "Saving...";
 
-    // 1. Try the silent path: a handle we already persisted in a previous session.
+    // 1. Silent path: POST to the local save server started by render-timer.sh.
+    //    Bound to 127.0.0.1, per-session token, writes config.json directly.
+    if (SAVE_URL && !SAVE_URL.startsWith("__")) {
+      try {
+        const res = await fetch(SAVE_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(currentTheme)
+        });
+        if (res.ok) {
+          panelMsg.textContent = "Saved.";
+          return;
+        }
+        const err = await res.json().catch(() => ({}));
+        panelMsg.textContent = "Save server rejected: " + (err.error || res.status);
+        return;
+      } catch (e) {
+        // Server unreachable (died, port closed). Fall through to legacy paths.
+        panelMsg.textContent = "Save server unreachable, trying file picker...";
+      }
+    }
+
+    // 2. Legacy fallback: File System Access API with persisted handle.
     let handle = null;
     try { handle = await idbGet(IDB_KEY); } catch (e) {}
     if (handle) {
@@ -724,16 +748,12 @@
           return;
         }
       } catch (err) {
-        // Stale handle (file moved/deleted). Forget it and fall through.
         try { await idbDel(IDB_KEY); } catch (e) {}
         handle = null;
       }
     }
-
-    // 2. First-time path: pick config.json once. Persist the handle for next time.
     if (window.showOpenFilePicker) {
       try {
-        panelMsg.textContent = "First save only: pick your config.json (~/.claude/skills/study-with-me/). Future saves will be silent.";
         const [picked] = await window.showOpenFilePicker({
           types: [{ description: "JSON", accept: { "application/json": [".json"] } }]
         });
@@ -743,7 +763,7 @@
         }
         await writeThemeToHandle(picked);
         try { await idbSet(IDB_KEY, picked); } catch (e) {}
-        panelMsg.textContent = "Saved. Future saves will be silent.";
+        panelMsg.textContent = "Saved.";
         return;
       } catch (err) {
         if (err && err.name === "AbortError") { panelMsg.textContent = "Save cancelled."; return; }
@@ -751,7 +771,7 @@
       }
     }
 
-    // 3. Last-resort fallback: download for browsers without File System Access API.
+    // 3. Last-resort: download the theme JSON.
     const blob = new Blob([JSON.stringify({ timer_ui: { theme: currentTheme } }, null, 2)],
                          { type: "application/json" });
     const url = URL.createObjectURL(blob);
