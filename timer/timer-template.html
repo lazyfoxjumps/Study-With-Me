@@ -6,12 +6,13 @@
 <title>__LABEL__</title>
 <style>
   :root {
-    --bg: #0f172a;
+    --bg: __BG__;
     --fg: #e2e8f0;
     --muted: #94a3b8;
     --accent: __ACCENT__;
-    --warn: #f59e0b;
-    --done: #22c55e;
+    --warn: __WARN__;
+    --break: __BREAK__;
+    --done: __DONE__;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body {
@@ -26,7 +27,7 @@
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    gap: 2rem;
+    gap: 1.5rem;
     padding: 2rem;
     text-align: center;
     user-select: none;
@@ -61,6 +62,36 @@
     border-radius: 999px;
     transition: width 1s linear, background 600ms ease;
   }
+  .controls {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+  }
+  .ctrl {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--fg);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 999px;
+    width: 3rem;
+    height: 3rem;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 200ms ease, transform 100ms ease;
+  }
+  .ctrl:hover { background: rgba(255, 255, 255, 0.12); }
+  .ctrl:active { transform: scale(0.95); }
+  .ctrl.primary {
+    width: 3.5rem;
+    height: 3.5rem;
+    font-size: 1.4rem;
+    background: var(--accent);
+    color: var(--bg);
+    border-color: transparent;
+  }
+  .ctrl.primary:hover { filter: brightness(1.1); }
   .meta {
     display: flex;
     gap: 1.5rem;
@@ -68,79 +99,456 @@
     font-size: clamp(0.85rem, 1.4vw, 1.05rem);
   }
   .meta span strong { color: var(--fg); font-weight: 500; }
-  body.warn { background: #2a1f0a; }
+  .gear {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    width: 2.25rem;
+    height: 2.25rem;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 50%;
+    color: var(--fg);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    transition: background 200ms ease, transform 400ms ease;
+  }
+  .gear:hover { background: rgba(255, 255, 255, 0.12); transform: rotate(60deg); }
+  .panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: min(360px, 90vw);
+    background: rgba(15, 23, 42, 0.96);
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 4rem 1.5rem 1.5rem;
+    overflow-y: auto;
+    transform: translateX(100%);
+    transition: transform 300ms ease;
+    z-index: 10;
+    text-align: left;
+  }
+  .panel.open { transform: translateX(0); }
+  .panel h2 {
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    color: var(--fg);
+  }
+  .panel h3 {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    margin: 1.25rem 0 0.5rem;
+    font-weight: 500;
+  }
+  .color-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+  .color-row label {
+    flex: 0 0 5.5rem;
+    font-size: 0.85rem;
+    color: var(--muted);
+    text-transform: capitalize;
+  }
+  .color-row input[type="color"] {
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+  }
+  .color-row input[type="text"] {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--fg);
+    padding: 0.45rem 0.6rem;
+    border-radius: 6px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 0.85rem;
+  }
+  .panel-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+  }
+  .panel-actions button {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--fg);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 0.6rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+  .panel-actions button.primary {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: transparent;
+    font-weight: 500;
+  }
+  .panel-actions button:hover { filter: brightness(1.15); }
+  .panel-msg {
+    margin-top: 0.75rem;
+    font-size: 0.8rem;
+    color: var(--muted);
+    min-height: 1rem;
+  }
+  body.warn { background: color-mix(in srgb, var(--warn) 18%, var(--bg)); }
   body.warn .time { color: var(--warn); }
   body.warn .bar { background: var(--warn); }
-  body.break { background: #0e2218; }
-  body.break .time { color: var(--done); }
-  body.break .bar { background: var(--done); }
+  body.warn .ctrl.primary { background: var(--warn); }
+  body.break { background: color-mix(in srgb, var(--break) 14%, var(--bg)); }
+  body.break .time { color: var(--break); }
+  body.break .bar { background: var(--break); }
+  body.break .ctrl.primary { background: var(--break); }
   body.done { background: #0a0a0a; }
   body.done .time { font-size: clamp(2rem, 5vw, 4rem); color: var(--done); }
-  body.done .bar-wrap { display: none; }
-  .pulse {
-    animation: pulse 4s ease-in-out infinite;
-  }
+  body.done .bar-wrap, body.done .controls { display: none; }
+  .pulse { animation: pulse 4s ease-in-out infinite; }
   @keyframes pulse {
     0%, 100% { opacity: 1; }
-    50% { opacity: 0.85; }
+    50% { opacity: 0.88; }
   }
 </style>
 </head>
 <body class="pulse">
+  <button class="gear" id="gear" title="Theme settings">⚙</button>
+
   <div class="goal" id="goal">__GOAL__</div>
   <div class="time" id="time">--:--</div>
   <div class="bar-wrap"><div class="bar" id="bar"></div></div>
+
+  <div class="controls">
+    <button class="ctrl" id="rewindBtn" title="Rewind">⏮</button>
+    <button class="ctrl primary" id="pauseBtn" title="Pause / Resume">⏸</button>
+    <button class="ctrl" id="skipBtn" title="Skip to end">⏭</button>
+  </div>
+
   <div class="meta">
     <span><strong id="label">__LABEL__</strong></span>
     <span>Started <strong id="start">__START_HHMM__</strong></span>
   </div>
 
+  <aside class="panel" id="panel">
+    <h2>Theme</h2>
+    <p style="font-size:0.8rem;color:var(--muted);margin-bottom:1rem;">
+      Tweak the colors live. "Save as default" writes them back to your config.
+    </p>
+
+    <h3>Colors</h3>
+    <div id="colorRows"></div>
+
+    <div class="panel-actions">
+      <button id="saveBtn" class="primary">Save as default</button>
+      <button id="resetBtn">Reset</button>
+    </div>
+    <div class="panel-msg" id="panelMsg"></div>
+  </aside>
+
 <script>
-  const END_TS = __END_TS__;
   const START_TS = __START_TS__;
+  const INITIAL_END_TS = __END_TS__;
   const MODE = "__MODE__";
   const LABEL = "__LABEL__";
+  const REWIND_SECONDS = __REWIND_SECONDS__;
+  const TEMPLATE_THEME = {
+    accent:     "__ACCENT__",
+    background: "__BG__",
+    warn:       "__WARN__",
+    break:      "__BREAK__",
+    done:       "__DONE__"
+  };
 
-  const timeEl = document.getElementById("time");
-  const barEl = document.getElementById("bar");
-  const body = document.body;
+  // ---- state machine ----
+  const state = {
+    mode: MODE,
+    endTs: INITIAL_END_TS,
+    pausedRemainingMs: null,
+    isPaused: false,
+    isComplete: false,
+    userTookControl: false,
+    chimeFired: { halfway: false, lastminute: false, complete: false }
+  };
+
+  const timeEl   = document.getElementById("time");
+  const barEl    = document.getElementById("bar");
+  const body     = document.body;
+  const rewindBtn = document.getElementById("rewindBtn");
+  const pauseBtn  = document.getElementById("pauseBtn");
+  const skipBtn   = document.getElementById("skipBtn");
 
   if (MODE === "break") body.classList.add("break");
 
   function pad(n) { return n < 10 ? "0" + n : "" + n; }
 
+  function remaining() {
+    if (state.isPaused) return state.pausedRemainingMs;
+    return Math.max(0, state.endTs - Date.now());
+  }
+  function totalMs() { return INITIAL_END_TS - START_TS; }
+
   function render() {
-    const now = Date.now();
-    const total = END_TS - START_TS;
-    const remaining = Math.max(0, END_TS - now);
-    const elapsed = total - remaining;
-    const pct = Math.min(100, (elapsed / total) * 100);
+    const rem = remaining();
+    const tot = totalMs();
+    const elapsed = tot - rem;
+    const pct = Math.min(100, Math.max(0, (elapsed / tot) * 100));
 
-    const mins = Math.floor(remaining / 60000);
-    const secs = Math.floor((remaining % 60000) / 1000);
+    const mins = Math.floor(rem / 60000);
+    const secs = Math.floor((rem % 60000) / 1000);
     const display = pad(mins) + ":" + pad(secs);
-
     timeEl.textContent = display;
     barEl.style.width = pct + "%";
-    document.title = display + " • " + LABEL;
+    document.title = (state.isPaused ? "(paused) " : "") + display + " • " + LABEL;
 
-    if (MODE === "focus" && remaining <= 60000 && remaining > 0) {
+    // halfway chime
+    if (state.mode === "focus" && !state.chimeFired.halfway && elapsed >= tot / 2 && rem > 0) {
+      state.chimeFired.halfway = true;
+      playChime("halfway");
+    }
+    // last-minute warn
+    if (state.mode === "focus" && rem <= 60000 && rem > 0) {
       body.classList.add("warn");
+      if (!state.chimeFired.lastminute) {
+        state.chimeFired.lastminute = true;
+        playChime("lastminute");
+      }
+    } else if (rem > 60000) {
+      body.classList.remove("warn");
     }
 
-    if (remaining <= 0) {
-      body.className = "done";
-      timeEl.textContent = MODE === "focus" ? "Block complete." : "Break complete.";
-      document.title = "Done • " + LABEL;
-      clearInterval(tick);
+    if (rem <= 0 && !state.isComplete) {
+      triggerComplete();
     }
   }
 
-  render();
-  const tick = setInterval(render, 1000);
+  function triggerComplete() {
+    state.isComplete = true;
+    state.isPaused = false;
+    stopTicking();
+    body.className = "done";
+    timeEl.textContent = state.mode === "focus" ? "Block complete." : "Break complete.";
+    document.title = "Done • " + LABEL;
+    if (!state.chimeFired.complete) {
+      state.chimeFired.complete = true;
+      playChime("complete");
+    }
+  }
 
+  // ---- chime (Web Audio, no audio file) ----
+  let audioCtx = null;
+  function playChime(kind) {
+    try {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return;
+      if (!audioCtx) audioCtx = new Ctx();
+      if (audioCtx.state === "suspended") audioCtx.resume();
+      const now = audioCtx.currentTime;
+      const notes = ({
+        halfway:    [523.25, 659.25],
+        lastminute: [659.25, 783.99],
+        complete:   [523.25, 659.25, 783.99]
+      })[kind] || [523.25];
+      notes.forEach((freq, i) => {
+        const osc  = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "sine";
+        osc.frequency.value = freq;
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        const start = now + i * 0.16;
+        const dur = 0.5;
+        gain.gain.setValueAtTime(0, start);
+        gain.gain.linearRampToValueAtTime(0.18, start + 0.03);
+        gain.gain.exponentialRampToValueAtTime(0.001, start + dur);
+        osc.start(start);
+        osc.stop(start + dur);
+      });
+    } catch (e) { /* silently swallow audio errors */ }
+  }
+
+  // ---- ticking ----
+  let tickId = null;
+  function startTicking() {
+    if (tickId) return;
+    tickId = setInterval(render, 1000);
+  }
+  function stopTicking() {
+    if (tickId) { clearInterval(tickId); tickId = null; }
+  }
+
+  // ---- controls ----
+  function togglePause() {
+    if (state.isComplete) return;
+    if (state.isPaused) {
+      state.endTs = Date.now() + state.pausedRemainingMs;
+      state.isPaused = false;
+      state.pausedRemainingMs = null;
+      pauseBtn.textContent = "⏸";
+      startTicking();
+    } else {
+      state.pausedRemainingMs = Math.max(0, state.endTs - Date.now());
+      state.isPaused = true;
+      pauseBtn.textContent = "▶";
+      stopTicking();
+    }
+    state.userTookControl = true;
+    render();
+  }
+
+  function rewind() {
+    if (state.isComplete) return;
+    const ms = REWIND_SECONDS * 1000;
+    if (state.isPaused) state.pausedRemainingMs += ms;
+    else state.endTs += ms;
+    state.userTookControl = true;
+    render();
+  }
+
+  function skip() {
+    if (state.isComplete) return;
+    state.endTs = Date.now();
+    state.pausedRemainingMs = 0;
+    state.userTookControl = true;
+    triggerComplete();
+  }
+
+  rewindBtn.addEventListener("click", rewind);
+  pauseBtn.addEventListener("click", togglePause);
+  skipBtn.addEventListener("click", skip);
+
+  document.addEventListener("keydown", (e) => {
+    if (e.target.tagName === "INPUT") return;
+    if (e.code === "Space") { e.preventDefault(); togglePause(); }
+    else if (e.code === "ArrowLeft") { rewind(); }
+    else if (e.code === "ArrowRight") { skip(); }
+  });
+
+  // ---- theme picker ----
+  const COLOR_KEYS = ["accent", "background", "warn", "break", "done"];
+  const VAR_MAP = { accent: "--accent", background: "--bg", warn: "--warn", break: "--break", done: "--done" };
+  const LS_KEY = "study-with-me-theme";
+
+  function loadTheme() {
+    try {
+      const saved = localStorage.getItem(LS_KEY);
+      if (saved) return Object.assign({}, TEMPLATE_THEME, JSON.parse(saved));
+    } catch (e) {}
+    return Object.assign({}, TEMPLATE_THEME);
+  }
+  function applyTheme(theme) {
+    COLOR_KEYS.forEach(k => {
+      document.documentElement.style.setProperty(VAR_MAP[k], theme[k]);
+    });
+  }
+  function persistTheme(theme) {
+    try { localStorage.setItem(LS_KEY, JSON.stringify(theme)); } catch (e) {}
+  }
+
+  const currentTheme = loadTheme();
+  applyTheme(currentTheme);
+
+  // build picker rows
+  const colorRowsEl = document.getElementById("colorRows");
+  COLOR_KEYS.forEach(k => {
+    const row = document.createElement("div");
+    row.className = "color-row";
+    row.innerHTML =
+      `<label>${k}</label>` +
+      `<input type="color" data-key="${k}" value="${currentTheme[k]}" />` +
+      `<input type="text" data-key="${k}" value="${currentTheme[k]}" maxlength="7" />`;
+    colorRowsEl.appendChild(row);
+  });
+
+  function isValidHex(s) { return /^#[0-9a-fA-F]{6}$/.test(s); }
+
+  colorRowsEl.addEventListener("input", (e) => {
+    const key = e.target.dataset.key;
+    if (!key) return;
+    let val = e.target.value;
+    if (e.target.type === "text" && !isValidHex(val)) return;
+    currentTheme[key] = val;
+    // sync sibling input
+    const siblings = colorRowsEl.querySelectorAll(`[data-key="${key}"]`);
+    siblings.forEach(s => { if (s !== e.target) s.value = val; });
+    applyTheme(currentTheme);
+    persistTheme(currentTheme);
+  });
+
+  // ---- save / reset ----
+  const saveBtn  = document.getElementById("saveBtn");
+  const resetBtn = document.getElementById("resetBtn");
+  const panelMsg = document.getElementById("panelMsg");
+
+  async function saveToConfig() {
+    panelMsg.textContent = "";
+    // try File System Access API
+    if (window.showOpenFilePicker) {
+      try {
+        const [handle] = await window.showOpenFilePicker({
+          types: [{ description: "JSON", accept: { "application/json": [".json"] } }]
+        });
+        const file = await handle.getFile();
+        const text = await file.text();
+        const cfg = JSON.parse(text);
+        cfg.timer_ui = cfg.timer_ui || {};
+        cfg.timer_ui.theme = Object.assign({}, currentTheme);
+        const writable = await handle.createWritable();
+        await writable.write(JSON.stringify(cfg, null, 2) + "\n");
+        await writable.close();
+        panelMsg.textContent = "Saved. New defaults active next session.";
+        return;
+      } catch (err) {
+        if (err && err.name === "AbortError") { panelMsg.textContent = "Save cancelled."; return; }
+        panelMsg.textContent = "FS access failed, downloading theme.json instead.";
+      }
+    }
+    // fallback: download
+    const blob = new Blob([JSON.stringify({ timer_ui: { theme: currentTheme } }, null, 2)],
+                         { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = "theme.json"; a.click();
+    URL.revokeObjectURL(url);
+    panelMsg.textContent = "Downloaded theme.json. Merge timer_ui.theme into your config.";
+  }
+
+  function resetTheme() {
+    Object.assign(currentTheme, TEMPLATE_THEME);
+    applyTheme(currentTheme);
+    persistTheme(currentTheme);
+    // refresh input values
+    colorRowsEl.querySelectorAll("input").forEach(inp => {
+      inp.value = currentTheme[inp.dataset.key];
+    });
+    panelMsg.textContent = "Reset to current defaults.";
+  }
+
+  saveBtn.addEventListener("click", saveToConfig);
+  resetBtn.addEventListener("click", resetTheme);
+
+  // gear toggle
+  document.getElementById("gear").addEventListener("click", () => {
+    document.getElementById("panel").classList.toggle("open");
+  });
+
+  // ---- boot ----
+  render();
+  startTicking();
   document.addEventListener("visibilitychange", () => {
-    if (!document.hidden) render();
+    if (!document.hidden && !state.isPaused && !state.isComplete) render();
   });
 </script>
 </body>

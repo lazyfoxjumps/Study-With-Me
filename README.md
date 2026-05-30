@@ -1,5 +1,7 @@
 # Study With Me
 
+> **new in v1.1**, the timer popup now has live controls (rewind, pause/play, skip) and a 5-color theme picker that saves back to your config. tap the gear icon to vibe-match the timer to your mood. see [CHANGELOG.md](CHANGELOG.md) for details.
+
 hey, glad you're here.
 
 if you've ever opened YouTube at 9pm, typed "study with me", and felt your shoulders drop a little just because some stranger lit a candle and started working in silence next to you, this skill is built for the same feeling. except now it lives in your terminal. and it remembers what you did.
@@ -85,7 +87,31 @@ bells fire at three moments via macOS notifications (or notify-send on Linux, No
 - final minute
 - block complete
 
-you can turn any of these off in `config.json` under `timer_ui`.
+a soft in-browser chime fires at the same three moments, synced to the visual timer (so it stays correct even if you pause, rewind, or skip).
+
+you can turn any of these off in `config.json` under `timer_ui`. set `native_bells: false` if you only want the in-browser chime (always synced to the visual timer, no drift after manual control).
+
+### controls (new in v1.1)
+
+three buttons sit just below the progress bar:
+
+- **⏮ rewind** adds 60 seconds back onto the clock (configurable in `config.json` as `rewind_seconds`)
+- **⏸ / ▶ pause/play** freezes and resumes the countdown
+- **⏭ skip** ends the block immediately and plays the completion chime
+
+keyboard shortcuts work too: space pauses, ← rewinds, → skips.
+
+### theme picker (new in v1.1)
+
+click the gear icon (top right) to open a settings panel with five color rows:
+
+- **accent**, the time text and progress bar
+- **background**, the whole page
+- **warn**, the last-minute glow
+- **break**, the rest state
+- **done**, block complete
+
+each row has a native color picker plus a hex input. changes apply live. hit **"save as default"** to write the theme back to your `config.json` (Chromium pops a permission prompt). non-Chromium browsers fall back to downloading a `theme.json` snippet.
 
 ## the break check-in
 
@@ -217,12 +243,20 @@ open `~/.claude/skills/study-with-me/config.json` and tune to taste:
   "reminders": { "water": true, "eyes": true, "stand": true },
   "timer_ui": {
     "enabled": true,
-    "accent_color": "#a78bfa",
     "font": "system-ui",
     "open_in_window": true,
     "notify_halfway": true,
     "notify_last_minute": true,
-    "notify_complete": true
+    "notify_complete": true,
+    "native_bells": true,
+    "rewind_seconds": 60,
+    "theme": {
+      "accent":     "#a78bfa",
+      "background": "#0f172a",
+      "warn":       "#f59e0b",
+      "break":      "#22c55e",
+      "done":       "#22c55e"
+    }
   }
 }
 ```
