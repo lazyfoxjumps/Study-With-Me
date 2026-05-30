@@ -5,6 +5,21 @@ All notable changes to this skill are documented here.
 The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this skill follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2026-05-30
+
+the skill talks like a person now, not a productivity app.
+
+### Changed
+
+- **Break check-in** softened from "you said you'd X. where are you?" to **"hey, what's the update, buddy? you said you'd X."** Same accountability, warmer landing.
+- **Intake questions** rephrased to feel conversational: "hey, what are you working on today?", "and what does done look like for this session?", "how's your energy right now?" The vague-goal pushback is still there, just kinder: "let's get a little more specific, what's the thing that'll feel finished?"
+- **Wrap-up questions** are now curious instead of clinical: "so, what did you actually get done?", "what's the next move? one concrete thing for tomorrow.", "how's the energy now, vs. when we started?", "anything you want to jot down before you log off?"
+- **Environment ritual** prompt: "want me to set the room for you? full ritual, quick ritual, or skip?"
+- **Mid-block interruption** answers stay terse but warmer at the end: "quick answer, use `useMemo` here. okay, back to the intro section, you've got this."
+- **Break reminders** phrased like a friend, not a wellness app: "drink some water, friend", "stand up, give the legs a stretch", "look 20 feet away for 20 seconds, the eyes will thank you."
+- **Close-out ritual** prompt: "want your apps back, or leave the room quiet?"
+- New voice rules in `SKILL.md`: lowercase-when-natural, vary endearments so they don't read like a tic, never toxic positivity, never shame, never lecture.
+
 ## [1.3.2] - 2026-05-30
 
 ### Fixed
