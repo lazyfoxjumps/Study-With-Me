@@ -45,6 +45,9 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Access-Control-Allow-Methods", "POST, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "content-type")
+        # Chrome 109+ Private Network Access: file:// (public) -> 127.0.0.1 (loopback)
+        # requires this header on the preflight, or the actual POST is blocked.
+        self.send_header("Access-Control-Allow-Private-Network", "true")
 
     def do_OPTIONS(self):
         self.send_response(204)

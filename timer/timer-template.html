@@ -761,8 +761,9 @@
         panelMsg.textContent = "Save server rejected: " + (err.error || res.status);
         return;
       } catch (e) {
-        // Server unreachable (died, port closed). Fall through to legacy paths.
-        panelMsg.textContent = "Save server unreachable, trying file picker...";
+        // Server unreachable (died, port closed, PNA blocked, etc). Fall through.
+        console.warn("save server fetch failed:", e);
+        panelMsg.textContent = "Save server unreachable (" + (e.message || e) + "), trying file picker...";
       }
     }
 

@@ -5,6 +5,17 @@ All notable changes to this skill are documented here.
 The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this skill follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.2] - 2026-05-30
+
+### Fixed
+
+- **"Save server unreachable" error in Chrome 109+ on real save attempts.** The save server's CORS preflight response was missing `Access-Control-Allow-Private-Network: true`, which Chrome's Private Network Access enforcement requires for any request from a `file://` origin to `127.0.0.1`. Chrome was returning the preflight as a success but then silently blocking the actual POST. Server now sends the header, the POST goes through, the config writes silently.
+- The earlier `curl`-based end-to-end test was insufficient because `curl` does not enforce CORS or PNA. Browsers do. Added a browser-style preflight check to the verification script.
+
+### Changed
+
+- The "Save server unreachable, trying file picker..." message in the theme panel now appends the actual fetch error, so future failures are easier to diagnose.
+
 ## [1.3.1] - 2026-05-25
 
 a tiny "X" so you can close the theme panel without hunting for the gear.
