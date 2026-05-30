@@ -653,28 +653,105 @@
   const resetBtn = document.getElementById("resetBtn");
   const panelMsg = document.getElementById("panelMsg");
 
+  // ---- persisted config.json handle (so future saves are silent) ----
+  const IDB_NAME = "study-with-me-db";
+  const IDB_STORE = "handles";
+  const IDB_KEY = "config-handle";
+
+  function idbOpen() {
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open(IDB_NAME, 1);
+      req.onupgradeneeded = () => req.result.createObjectStore(IDB_STORE);
+      req.onsuccess = () => resolve(req.result);
+      req.onerror   = () => reject(req.error);
+    });
+  }
+  async function idbGet(key) {
+    const db = await idbOpen();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(IDB_STORE, "readonly");
+      const r = tx.objectStore(IDB_STORE).get(key);
+      r.onsuccess = () => resolve(r.result);
+      r.onerror   = () => reject(r.error);
+    });
+  }
+  async function idbSet(key, val) {
+    const db = await idbOpen();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(IDB_STORE, "readwrite");
+      tx.objectStore(IDB_STORE).put(val, key);
+      tx.oncomplete = () => resolve();
+      tx.onerror    = () => reject(tx.error);
+    });
+  }
+  async function idbDel(key) {
+    const db = await idbOpen();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(IDB_STORE, "readwrite");
+      tx.objectStore(IDB_STORE).delete(key);
+      tx.oncomplete = () => resolve();
+      tx.onerror    = () => reject(tx.error);
+    });
+  }
+  async function ensureRW(handle) {
+    if (!handle || !handle.queryPermission) return false;
+    const opts = { mode: "readwrite" };
+    if ((await handle.queryPermission(opts)) === "granted") return true;
+    return (await handle.requestPermission(opts)) === "granted";
+  }
+  async function writeThemeToHandle(handle) {
+    const file = await handle.getFile();
+    const text = await file.text();
+    const cfg = JSON.parse(text);
+    cfg.timer_ui = cfg.timer_ui || {};
+    cfg.timer_ui.theme = Object.assign({}, currentTheme);
+    const writable = await handle.createWritable();
+    await writable.write(JSON.stringify(cfg, null, 2) + "\n");
+    await writable.close();
+  }
+
   async function saveToConfig() {
     panelMsg.textContent = "";
+
+    // 1. Try the silent path: a handle we already persisted in a previous session.
+    let handle = null;
+    try { handle = await idbGet(IDB_KEY); } catch (e) {}
+    if (handle) {
+      try {
+        if (await ensureRW(handle)) {
+          await writeThemeToHandle(handle);
+          panelMsg.textContent = "Saved.";
+          return;
+        }
+      } catch (err) {
+        // Stale handle (file moved/deleted). Forget it and fall through.
+        try { await idbDel(IDB_KEY); } catch (e) {}
+        handle = null;
+      }
+    }
+
+    // 2. First-time path: pick config.json once. Persist the handle for next time.
     if (window.showOpenFilePicker) {
       try {
-        const [handle] = await window.showOpenFilePicker({
+        panelMsg.textContent = "First save only: pick your config.json (~/.claude/skills/study-with-me/). Future saves will be silent.";
+        const [picked] = await window.showOpenFilePicker({
           types: [{ description: "JSON", accept: { "application/json": [".json"] } }]
         });
-        const file = await handle.getFile();
-        const text = await file.text();
-        const cfg = JSON.parse(text);
-        cfg.timer_ui = cfg.timer_ui || {};
-        cfg.timer_ui.theme = Object.assign({}, currentTheme);
-        const writable = await handle.createWritable();
-        await writable.write(JSON.stringify(cfg, null, 2) + "\n");
-        await writable.close();
-        panelMsg.textContent = "Saved. New defaults active next session.";
+        if (!(await ensureRW(picked))) {
+          panelMsg.textContent = "Permission denied. Save cancelled.";
+          return;
+        }
+        await writeThemeToHandle(picked);
+        try { await idbSet(IDB_KEY, picked); } catch (e) {}
+        panelMsg.textContent = "Saved. Future saves will be silent.";
         return;
       } catch (err) {
         if (err && err.name === "AbortError") { panelMsg.textContent = "Save cancelled."; return; }
         panelMsg.textContent = "FS access failed, downloading theme.json instead.";
       }
     }
+
+    // 3. Last-resort fallback: download for browsers without File System Access API.
     const blob = new Blob([JSON.stringify({ timer_ui: { theme: currentTheme } }, null, 2)],
                          { type: "application/json" });
     const url = URL.createObjectURL(blob);
@@ -683,6 +760,7 @@
     URL.revokeObjectURL(url);
     panelMsg.textContent = "Downloaded theme.json. Merge timer_ui.theme into your config.";
   }
+
 
   function resetTheme() {
     Object.assign(currentTheme, TEMPLATE_THEME);

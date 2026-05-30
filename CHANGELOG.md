@@ -5,6 +5,20 @@ All notable changes to this skill are documented here.
 The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this skill follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.1] - 2026-05-25
+
+"save as default" stops asking you to pick a file location every single time.
+
+### Changed
+
+- The first time you hit **Save as default**, the timer asks you once to point at your `~/.claude/skills/study-with-me/config.json`. The file handle is then persisted in IndexedDB. Every save after that is silent (no picker, no prompt, just writes).
+- If the saved location ever goes stale (file moved or deleted), the timer detects it, forgets the stored handle, and prompts you to re-pick. No manual intervention.
+- The browser's File System Access permission model means we cannot skip the very first picker (security sandbox). The post-save message now makes this expectation explicit.
+
+### Known limitations
+
+- Stored handle is per-browser-profile. If you run the timer in Chrome `--app` mode but later open the file in a different browser, that browser will need its own first-time pick.
+
 ## [1.2.0] - 2026-05-25
 
 five academia-flavored color presets, plus proper light-theme support so the timer doesn't break when the background goes cream.
